@@ -1,4 +1,4 @@
-module PC_Register #(
+module pc_register #(
     parameter ADDR_WIDTH = 32
 ) (
     input clk,
