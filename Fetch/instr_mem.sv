@@ -4,7 +4,7 @@ module instr_memory #(
     parameter DEPTH = 1024
 )(
     input logic [ADDR_WIDTH-1:0] pc_address, // byte address
-    output logic [INSTR_WIDTH-1:0] instruction,
+    output logic [INSTR_WIDTH-1:0] instruction
 ); 
 
 logic [INSTR_WIDTH-1:0] memory [0:DEPTH-1];

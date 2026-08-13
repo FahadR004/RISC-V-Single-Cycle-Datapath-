@@ -1,10 +1,10 @@
 module pc_register #(
     parameter ADDR_WIDTH = 32
 ) (
-    input clk,
-    input rst_n,
-    input [ADDR_WIDTH-1:0] next_pc, // Next PC value (Byte Address)
-    output reg [ADDR_WIDTH-1:0] pc_current // Current PC value (Byte Address)
+    input logic clk,
+    input logic rst_n,
+    input logic [ADDR_WIDTH-1:0] next_pc, // Next PC value (Byte Address)
+    output logic [ADDR_WIDTH-1:0] pc_current // Current PC value (Byte Address)
 );
 
     always @(posedge clk or negedge rst_n) begin
