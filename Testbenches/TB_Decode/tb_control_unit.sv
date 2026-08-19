@@ -110,8 +110,8 @@ task automatic run_case(
 endtask
 
 initial begin
-    dumpfile("tb_control_unit.vcd");
-    dumpvars(0, tb_control_unit);
+    $dumpfile("tb_control_unit.vcd");
+    $dumpvars(0, tb_control_unit);
 end
 
 initial begin
@@ -166,6 +166,16 @@ initial begin
     run_case("AUIPC",
         {20'h0, 5'd1, 7'h17},
         0,0,0,0, 0,0, 2'b00, 0,1, 1);
+
+    // FENCE: opcode 0x0F — should behave as full no-op
+    run_case("FENCE",
+        {25'h0, 7'h0F},
+        0,0,0,0, 0,0, 2'b00, 0,0, 0);
+
+    // ECALL: opcode 0x73 — currently a no-op placeholder
+    run_case("ECALL",
+        {25'h0, 7'h73},
+    0,0,0,0, 0,0, 2'b00, 0,0, 0);
 
     // Unknown/reserved opcode: everything should fall back to defaults (all 0)
     run_case("Unknown opcode (defaults)",
