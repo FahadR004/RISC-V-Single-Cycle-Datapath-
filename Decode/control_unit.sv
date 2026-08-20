@@ -30,6 +30,9 @@ assign opcode_bits = instruction[6:0];
 assign funct3      = instruction[14:12];
 assign funct7      = instruction[31:25];
 
+// OPCODES
+// 
+
 // aluOp == 00 -> For ADD (for load/store)
 // aluOp == 01 -> For SUB (for branch)
 // aluOp == 10 -> For R-type and I-type arithmetic (defer to funct3/funct7)
@@ -48,17 +51,17 @@ always_comb begin
     regWrite = 0;
 
     case (opcode_bits)
-        // Load Instructions (I-type)
-        7'h03: begin  // LW, LB, LH, LBU, LHU
-            // regDst   = 0;
+        // Arithmetic (R-type)
+        7'h33: begin  // ADD, SUB, AND, OR, XOR, SLL, SRL, SRA
+            regDst   = 1;
             // branch   = 0;
             // jump     = 0;
             // jalr     = 0;
-            memRead  = 1;
-            memToReg = 1;
-            aluOp    = 2'b00;   // ADD (address calc)
+            // memRead  = 0;
+            // memToReg = 0;
+            aluOp    = 2'b10;   // defer to funct3/funct7 in alu_control
             // memWrite = 0;
-            aluSrc   = 1;       // immediate
+            aluSrc   = 0;       // register
             regWrite = 1;
         end
 
@@ -76,31 +79,17 @@ always_comb begin
             regWrite = 1;
         end
 
-        // JALR (I-type)
-        7'h67: begin  // JALR
+        // Load Instructions (I-type)
+        7'h03: begin  // LW, LB, LH, LBU, LHU
             // regDst   = 0;
             // branch   = 0;
             // jump     = 0;
-            jalr     = 1;
-            // memRead  = 0;
-            // memToReg = 0;
-            aluOp    = 2'b00;   // ADD (rs1 + imm)
+            // jalr     = 0;
+            memRead  = 1;
+            memToReg = 1;
+            aluOp    = 2'b00;   // ADD (address calc)
             // memWrite = 0;
             aluSrc   = 1;       // immediate
-            regWrite = 1;       // save return address (PC+4)
-        end
-
-        // Arithmetic (R-type)
-        7'h33: begin  // ADD, SUB, AND, OR, XOR, SLL, SRL, SRA
-            regDst   = 1;
-            // branch   = 0;
-            // jump     = 0;
-            // jalr     = 0;
-            // memRead  = 0;
-            // memToReg = 0;
-            aluOp    = 2'b10;   // defer to funct3/funct7 in alu_control
-            // memWrite = 0;
-            aluSrc   = 0;       // register
             regWrite = 1;
         end
 
@@ -117,7 +106,7 @@ always_comb begin
             aluSrc   = 1;       // immediate
             // regWrite = 0;
         end
-
+        
         // Branch Instructions (B-type)
         7'h63: begin  // BEQ, BNE, BLT, BGE, BLTU, BGEU
             // regDst   = 0;
@@ -131,21 +120,7 @@ always_comb begin
             aluSrc   = 0;       // register
             // regWrite = 0;
         end
-
-        // JAL (J-type)
-        7'h6F: begin  // JAL
-            // regDst   = 0;
-            // branch   = 0;
-            jump     = 1;
-            // jalr     = 0;
-            // memRead  = 0;
-            // memToReg = 0;
-            // aluOp    = 2'b00;
-            // memWrite = 0;
-            // aluSrc   = 0;
-            regWrite = 1;       // save return address (PC+4)
-        end
-
+        
         // Upper Immediate (U-type)
         7'h37: begin  // LUI
             // regDst   = 0;
@@ -172,6 +147,34 @@ always_comb begin
             // memWrite = 0;
             aluSrc   = 1;       // immediate
             regWrite = 1;
+        end
+
+        // JAL (J-type)
+        7'h6F: begin  // JAL
+            // regDst   = 0;
+            // branch   = 0;
+            jump     = 1;
+            // jalr     = 0;
+            // memRead  = 0;
+            // memToReg = 0;
+            // aluOp    = 2'b00;
+            // memWrite = 0;
+            // aluSrc   = 0;
+            regWrite = 1;       // save return address (PC+4)
+        end
+
+           // JALR (I-type)
+        7'h67: begin  // JALR
+            // regDst   = 0;
+            // branch   = 0;
+            // jump     = 0;
+            jalr     = 1;
+            // memRead  = 0;
+            // memToReg = 0;
+            aluOp    = 2'b00;   // ADD (rs1 + imm)
+            // memWrite = 0;
+            aluSrc   = 1;       // immediate
+            regWrite = 1;       // save return address (PC+4)
         end
 
         // MISC-MEM (FENCE) — no-op: single-cycle, in-order, no reordering to fence
