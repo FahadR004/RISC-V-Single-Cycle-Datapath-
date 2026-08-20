@@ -7,7 +7,6 @@ module control_unit #(
     input  logic [INSTR_WIDTH-1:0] instruction,
 
     // Control Signals Output
-    output logic       regDst,
     output logic       branch,     // conditional branch (BEQ, BNE, ...)
     output logic       jump,       // unconditional jump, target = PC + imm (JAL)
     output logic       jalr,       // unconditional jump, target = rs1 + imm (JALR)
@@ -31,7 +30,15 @@ assign funct3      = instruction[14:12];
 assign funct7      = instruction[31:25];
 
 // OPCODES
-// 
+// R-Type = 7'b011_0011 | 0x33 | 51
+// (Arithmetic) I-Type = 7'b001_0011 | 0x13 | 19
+// (Load) I-Type = 7'b000_0011 | 0x03 | 3
+// S-Type = 7'b010_0011 | 0x23 | 35
+// B-Type = 7'b110_0011 | 0x63 | 99
+// (LUI) U-Type = 7'b011_0111 | 0x37 | 55 
+// (AUIPC) U-Type = 7'b001_0111 | 0x17 | 23
+// J-Type = 7'b110_1111 | 0x6F | 111
+// (jalr) I-Type = 7'b110_0111 | 0x67 | 101
 
 // aluOp == 00 -> For ADD (for load/store)
 // aluOp == 01 -> For SUB (for branch)
@@ -39,7 +46,6 @@ assign funct7      = instruction[31:25];
 
 always_comb begin
     // Default
-    regDst   = 0;
     branch   = 0;
     jump     = 0;
     jalr     = 0;
@@ -53,7 +59,6 @@ always_comb begin
     case (opcode_bits)
         // Arithmetic (R-type)
         7'h33: begin  // ADD, SUB, AND, OR, XOR, SLL, SRL, SRA
-            regDst   = 1;
             // branch   = 0;
             // jump     = 0;
             // jalr     = 0;
@@ -67,7 +72,6 @@ always_comb begin
 
         // Arithmetic Immediate (I-type)
         7'h13: begin  // ADDI, ANDI, ORI, XORI, SLTI, SLTIU, SLLI, SRLI, SRAI
-            // regDst   = 0;
             // branch   = 0;
             // jump     = 0;
             // jalr     = 0;
@@ -81,7 +85,6 @@ always_comb begin
 
         // Load Instructions (I-type)
         7'h03: begin  // LW, LB, LH, LBU, LHU
-            // regDst   = 0;
             // branch   = 0;
             // jump     = 0;
             // jalr     = 0;
@@ -95,7 +98,6 @@ always_comb begin
 
         // Store Instructions (S-type)
         7'h23: begin  // SW, SB, SH
-            // regDst   = 0;
             // branch   = 0;
             // jump     = 0;
             // jalr     = 0;
@@ -109,7 +111,6 @@ always_comb begin
         
         // Branch Instructions (B-type)
         7'h63: begin  // BEQ, BNE, BLT, BGE, BLTU, BGEU
-            // regDst   = 0;
             branch   = 1;
             // jump     = 0;
             // jalr     = 0;
@@ -123,7 +124,6 @@ always_comb begin
         
         // Upper Immediate (U-type)
         7'h37: begin  // LUI
-            // regDst   = 0;
             // branch   = 0;
             // jump     = 0;
             // jalr     = 0;
@@ -137,7 +137,6 @@ always_comb begin
 
         // Add Upper Immediate to PC (U-type)
         7'h17: begin  // AUIPC
-            // regDst   = 0;
             // branch   = 0;
             // jump     = 0;
             // jalr     = 0;
@@ -151,7 +150,6 @@ always_comb begin
 
         // JAL (J-type)
         7'h6F: begin  // JAL
-            // regDst   = 0;
             // branch   = 0;
             jump     = 1;
             // jalr     = 0;
@@ -165,7 +163,6 @@ always_comb begin
 
            // JALR (I-type)
         7'h67: begin  // JALR
-            // regDst   = 0;
             // branch   = 0;
             // jump     = 0;
             jalr     = 1;

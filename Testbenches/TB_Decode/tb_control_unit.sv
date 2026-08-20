@@ -9,7 +9,6 @@ localparam REG_NUMS    = 32;
 
 logic [31:0] instruction;
 
-logic       regDst;
 logic       branch;
 logic       jump;
 logic       jalr;
@@ -34,7 +33,6 @@ control_unit #(
     .REG_NUMS (REG_NUMS)
 ) dut (
     .instruction (instruction),
-    .regDst      (regDst),
     .branch      (branch),
     .jump        (jump),
     .jalr        (jalr),
@@ -82,7 +80,6 @@ endtask
 task automatic run_case(
     input string       name,
     input logic [31:0] instr,
-    input logic         e_regDst,
     input logic         e_branch,
     input logic         e_jump,
     input logic         e_jalr,
@@ -97,7 +94,6 @@ task automatic run_case(
     #1; // allow combinational logic to settle
 
     $display("Test: %s (instr=%h, opcode=%h)", name, instr, opcode);
-    check ("regDst",   regDst,   e_regDst);
     check ("branch",   branch,   e_branch);
     check ("jump",     jump,     e_jump);
     check ("jalr",     jalr,     e_jalr);
@@ -115,72 +111,72 @@ initial begin
 end
 
 initial begin
-    // name, instr,regDst,branch,jump,jalr,memRead,memToReg,aluOp,memWrite,aluSrc,regWrite
+    // name, instr,branch,jump,jalr,memRead,memToReg,aluOp,memWrite,aluSrc,regWrite
 
     // LW: opcode 0x03
     run_case("LW",
         make_instr(7'h0, 5'd0, 5'd1, 3'b010, 5'd2, 7'h03),
-        0,0,0,0, 1,1, 2'b00, 0,1, 1);
+        0,0,0, 1,1, 2'b00, 0,1, 1);
 
     // ADDI: opcode 0x13
     run_case("ADDI",
         make_instr(7'h0, 5'd0, 5'd1, 3'b000, 5'd2, 7'h13),
-        0,0,0,0, 0,0, 2'b10, 0,1, 1);
+        0,0,0, 0,0, 2'b10, 0,1, 1);
 
     // JALR: opcode 0x67
     run_case("JALR",
         make_instr(7'h0, 5'd0, 5'd1, 3'b000, 5'd2, 7'h67),
-        0,0,0,1, 0,0, 2'b00, 0,1, 1);
+        0,0,1, 0,0, 2'b00, 0,1, 1);
 
     // ADD (R-type): opcode 0x33, funct3=0, funct7=0
     run_case("ADD (R-type)",
         make_instr(7'h00, 5'd3, 5'd1, 3'b000, 5'd2, 7'h33),
-        1,0,0,0, 0,0, 2'b10, 0,0, 1);
+        0,0,0, 0,0, 2'b10, 0,0, 1);
 
     // SUB (R-type): opcode 0x33, funct3=0, funct7=0x20
     run_case("SUB (R-type)",
         make_instr(7'h20, 5'd3, 5'd1, 3'b000, 5'd2, 7'h33),
-        1,0,0,0, 0,0, 2'b10, 0,0, 1);
+        0,0,0, 0,0, 2'b10, 0,0, 1);
 
     // SW: opcode 0x23
     run_case("SW",
         make_instr(7'h0, 5'd3, 5'd1, 3'b010, 5'd0, 7'h23),
-        0,0,0,0, 0,0, 2'b00, 1,1, 0);
+        0,0,0, 0,0, 2'b00, 1,1, 0);
 
     // BEQ: opcode 0x63
     run_case("BEQ",
         make_instr(7'h0, 5'd3, 5'd1, 3'b000, 5'd0, 7'h63),
-        0,1,0,0, 0,0, 2'b01, 0,0, 0);
+        1,0,0, 0,0, 2'b01, 0,0, 0);
 
     // JAL: opcode 0x6F
     run_case("JAL",
         {25'h0, 7'h6F},
-        0,0,1,0, 0,0, 2'b00, 0,0, 1);
+        0,1,0, 0,0, 2'b00, 0,0, 1);
 
     // LUI: opcode 0x37
     run_case("LUI",
         {20'h0, 5'd1, 7'h37},
-        0,0,0,0, 0,0, 2'b11, 0,1, 1);
+        0,0,0, 0,0, 2'b11, 0,1, 1);
 
     // AUIPC: opcode 0x17
     run_case("AUIPC",
         {20'h0, 5'd1, 7'h17},
-        0,0,0,0, 0,0, 2'b00, 0,1, 1);
+        0,0,0, 0,0, 2'b00, 0,1, 1);
 
     // FENCE: opcode 0x0F — should behave as full no-op
     run_case("FENCE",
         {25'h0, 7'h0F},
-        0,0,0,0, 0,0, 2'b00, 0,0, 0);
+        0,0,0, 0,0, 2'b00, 0,0, 0);
 
     // ECALL: opcode 0x73 — currently a no-op placeholder
     run_case("ECALL",
         {25'h0, 7'h73},
-    0,0,0,0, 0,0, 2'b00, 0,0, 0);
+    0,0,0, 0,0, 2'b00, 0,0, 0);
 
     // Unknown/reserved opcode: everything should fall back to defaults (all 0)
     run_case("Unknown opcode (defaults)",
         {25'h0, 7'h5B},
-        0,0,0,0, 0,0, 2'b00, 0,0, 0);
+        0,0,0, 0,0, 2'b00, 0,0, 0);
 
     // funct3 / funct7 passthrough check
     instruction = make_instr(7'h20, 5'd5, 5'd6, 3'b101, 5'd7, 7'h33); // SRA
