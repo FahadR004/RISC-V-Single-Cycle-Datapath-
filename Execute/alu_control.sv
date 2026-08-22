@@ -55,7 +55,7 @@ always @(*) begin
             alu_control = ALU_ADD;
         end
         
-        2'b01: begin  // Conditional Branches
+        2'b01: begin  // Conditional Branches -> Not needed anymore as ALU now continuously assigns flags of lt, ltu and eq on every cycle so the result calculation is not needed and branch_adder_mux uses the funct3 for resolution itself
             alu_control = ALU_SUB;
         end
         

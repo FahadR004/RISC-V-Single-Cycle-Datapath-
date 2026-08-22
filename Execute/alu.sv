@@ -5,7 +5,11 @@ module alu #(
     input logic [DATA_WIDTH-1:0] alu_src_a,
     input logic [DATA_WIDTH-1:0] alu_src_b,
     output logic [DATA_WIDTH-1:0] result,
-    output logic zero
+
+    // FLAG OUTPUTS
+    output logic lt,
+    output logic ltu,
+    output logic eq
 );
 
 localparam ALU_ADD  = 4'b0000;
@@ -19,6 +23,10 @@ localparam ALU_SRA  = 4'b0111;
 localparam ALU_OR   = 4'b1000;
 localparam ALU_AND  = 4'b1001;
 localparam ALU_LUI  = 4'b1010;
+
+logic signed [DATA_WIDTH-1:0] signed_a, signed_b;
+assign signed_a = alu_src_a;
+assign signed_b = alu_src_b;
 
 always @(*) begin
     case (alu_control)
@@ -37,6 +45,8 @@ always @(*) begin
     endcase
 end
 
-assign zero = (result == {DATA_WIDTH{1'b0}});
+assign lt = signed_a < signed_b;
+assign ltu = alu_src_a < alu_src_b;
+assign eq = alu_src_a == alu_src_b;
 
 endmodule
