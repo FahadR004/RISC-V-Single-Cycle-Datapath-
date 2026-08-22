@@ -43,6 +43,7 @@ assign funct7      = instruction[31:25];
 // aluOp == 00 -> For ADD (for load/store)
 // aluOp == 01 -> For SUB (for branch)
 // aluOp == 10 -> For R-type and I-type arithmetic (defer to funct3/funct7)
+// aluOp == 11 -> For upper immediate
 
 always_comb begin
     // Default
