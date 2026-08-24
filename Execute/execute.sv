@@ -27,10 +27,14 @@ module Execute # (
 );
 
 logic [3:0] alu_control;
+logic [DATA_WIDTH-1:0]  alu_src_a;
 logic [DATA_WIDTH-1:0] alu_src_b;
 logic lt;
 logic eq;
 logic ltu;
+
+// First ALU operand mux 
+assign alu_src_a = (opcode == 7'h17) ? pc_current_addr : read_data1;
 
 // Second ALU operand mux
 assign alu_src_b = aluSrc ? immediate: read_data2; 
@@ -50,7 +54,7 @@ alu # (
 ) alu_module (
     // Inputs
     .alu_control(alu_control),
-    .alu_src_a(read_data1),
+    .alu_src_a(alu_src_a),
     .alu_src_b(alu_src_b),
     
     // Outputs
