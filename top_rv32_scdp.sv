@@ -1,4 +1,4 @@
-module rv32_scdp # (
+module top_rv32_scdp # (
     parameter ADDR_WIDTH = 32,
     parameter INSTR_WIDTH = 32, // 4 byte instruction
     parameter DATA_WIDTH = 32, 
@@ -136,6 +136,7 @@ Memory #(
     .address(alu_result),
     .memRead(memRead),
     .memWrite(memWrite),
+    .funct3(funct3),
     // Output of Register File as input to Memory Stage
     .write_data(read_data2),
     // Output of the Memory Stage
@@ -151,7 +152,7 @@ Write_Back # (
     .mem_read_data(mem_read_data),
     .alu_result(alu_result),
     .jalr(jalr),
-    .jump(jump)
+    .jump(jump),
     .pc_plus_4(pc_plus_4),
     // Output
     .write_data(write_data)
