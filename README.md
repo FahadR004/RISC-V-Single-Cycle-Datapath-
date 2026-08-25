@@ -188,6 +188,7 @@ This processor was synthesized using the Quartus Lite software.
 
 <div align="center">
     <img src="Images/synthesized_cct.png" alt="Synthesized Circuit"/>
+        <p><i>Synthesized SCDP</i></p>
     <br>
 </div>
 
