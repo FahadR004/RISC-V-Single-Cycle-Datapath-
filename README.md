@@ -8,7 +8,7 @@ This project implements a RISC-V 32-bit Single-Cycle Processor with support for 
 </div>
 
 ## Instruction Set 
-The base instruction set RV32I is implemented with support for the following 38 instructions:
+The base instruction set RV32I is implemented with support for the following 37 instructions:
 
 | Instruction | Format | Opcode (`opcode`) | Funct3 (`funct3`) | Funct7 (`funct7`) | Usage |
 | :--- | :---: | :---: | :---: | :---: | :--- |
