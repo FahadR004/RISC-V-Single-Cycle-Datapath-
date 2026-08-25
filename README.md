@@ -4,7 +4,7 @@ This project implements a RISC-V 32-bit Single-Cycle Processor with support for 
 
 <div align="center">
     <img src="Images/scdp.png" alt="SCDP Image from textbook"/>
-    <i>Image from Computer Organization and Design: RISC-V Edition by Patterson and Hennessy</i>
+    <p><i>Image from Computer Organization and Design: RISC-V Edition by Patterson and Hennessy</i></p>
 </div>
 
 ## Instruction Set 
@@ -109,7 +109,7 @@ This processor was tested with the <a href="https://github.com/riscv-software-sr
 
 <div align="center">
     <img src="Images/tests_summary.png" alt="Console Output"/>
-    <i>Portion of the final script's output. Full output can be found in `Simulation/SIM_SCDP/output.txt`</i>
+    <p><i>Portion of the final script's output. Full output can be found in `Simulation/SIM_SCDP/output.txt`</i></p>
     <br>
 </div>
 
